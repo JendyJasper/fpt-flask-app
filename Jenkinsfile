@@ -44,7 +44,7 @@ pipeline {
             steps {
                 echo 'Loging in....'
                 sh 'sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 571207880192.dkr.ecr.us-east-1.amazonaws.com'
-                sh 'login successful..'
+                echo 'login successful..'
             }
         }
         stage('Docker Build') {
