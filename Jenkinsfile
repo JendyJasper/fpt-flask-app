@@ -43,26 +43,26 @@ pipeline {
         stage('Docker Login') {
             steps {
                 echo 'Loging in....'
-                sh 'docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 571207880192.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 571207880192.dkr.ecr.us-east-1.amazonaws.com'
                 sh 'login successful..'
             }
         }
         stage('Docker Build') {
             steps {
                 echo 'Building....'
-                sh 'docker build -t fpt-flask-app:${env.COMMIT_HASH} .'
+                sh 'sudo docker build -t fpt-flask-app:${env.COMMIT_HASH} .'
             }
         }
         stage('Docker Tag') {
             steps {
                 echo 'Tagging image....'
-                sh 'docker tag fpt-flask-app:${env.COMMIT_HASH} 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
+                sh 'sudo docker tag fpt-flask-app:${env.COMMIT_HASH} 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
             }
         }
         stage('Docker Push') {
             steps {
                 echo 'Pushing....'
-                sh 'docker push 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
+                sh 'sudo docker push 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
             }
         }
         // stage('Pull & Push k8s Manifest') {
