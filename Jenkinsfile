@@ -11,13 +11,13 @@ pipeline {
         ECR_REPOSITORY = 'fpt-flask-app'
     }
 
-    stages {
-        stage('SCM Checkout') {
-            steps {
-                echo 'Cloning the repo..'
-                sh 'git clone https://github.com/JendyJasper/fpt-flask-app'
-            }
-        }
+    // stages {
+    //     stage('SCM Checkout') {
+    //         steps {
+    //             echo 'Cloning the repo..'
+    //             sh 'git clone https://github.com/JendyJasper/fpt-flask-app'
+    //         }
+    //     }
         stage('Retrieve Latest Tag') {
             steps {
                 script {
