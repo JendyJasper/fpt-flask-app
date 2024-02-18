@@ -50,19 +50,19 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo 'Building....'
-                sh 'sudo docker build -t fpt-flask-app:${env.COMMIT_HASH} .'
+                sh "sudo docker build -t fpt-flask-app:${env.COMMIT_HASH} ."
             }
         }
         stage('Docker Tag') {
             steps {
                 echo 'Tagging image....'
-                sh 'sudo docker tag fpt-flask-app:${env.COMMIT_HASH} 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
+                sh "sudo docker tag fpt-flask-app:${env.COMMIT_HASH} 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}"
             }
         }
         stage('Docker Push') {
             steps {
                 echo 'Pushing....'
-                sh 'sudo docker push 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
+                sh "sudo docker push 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}"
             }
         }
         // stage('Pull & Push k8s Manifest') {
