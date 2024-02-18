@@ -18,59 +18,72 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-        stage('Retrieve Latest Tag') {
-            steps {
-                script {
-                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
-                    def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
+        // stage('Retrieve Latest Tag') {
+        //     steps {
+        //         script {
+        //             def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
+        //             def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
                     
-                    // Parse JSON using jsonSlurper
-                    def jsonSlurper = new groovy.json.JsonSlurper()
-                    def tags = jsonSlurper.parseText(tagsJson)
+        //             // Parse JSON using jsonSlurper
+        //             def jsonSlurper = new groovy.json.JsonSlurper()
+        //             def tags = jsonSlurper.parseText(tagsJson)
                     
-                    def latestTag = tags.imageDetails[0].imageTags[0]
-                    echo "Latest tag: $latestTag"
-                    // Use the latestTag as needed in subsequent steps
-                }
-            }
-        }
+        //             def latestTag = tags.imageDetails[0].imageTags[0]
+        //             echo "Latest tag: $latestTag"
+        //             // Use the latestTag as needed in subsequent steps
+        //         }
+        //     }
+        // }
         stage('Test') {
             steps {
                 echo 'Testing..'
                 echo 'Hello World!'
             }
         }
-        stage('Build') {
+        stage('Docker Login') {
+            steps {
+                echo 'Loging in....'
+                sh 'docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 571207880192.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'login successful..'
+            }
+        }
+        stage('Docker Build') {
             steps {
                 echo 'Building....'
-                sh 'docker build -t my_image:${env.COMMIT_HASH} .'
+                sh 'docker build -t fpt-flask-app:${env.COMMIT_HASH} .'
             }
         }
-        stage('Push') {
+        stage('Docker Tag') {
+            steps {
+                echo 'Tagging image....'
+                sh 'docker tag fpt-flask-app:${env.COMMIT_HASH} 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
+            }
+        }
+        stage('Docker Push') {
             steps {
                 echo 'Pushing....'
-                sh 'docker push 123456789012.dkr.ecr.us-west-2.amazonaws.com/my-repo/my_image:${env.COMMIT_HASH}'
+                sh 'docker push 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}'
             }
         }
-        stage('Pull & Push k8s Manifest') {
-            steps {
-                dir('path/to/git/directory') {
-                    // Change to the specified directory
-                    sh 'git pull origin master'
-                    // Pull latest changes from the master branch
-                    echo "Latest tag: $latestTag"
-                    echo "Latest tag: $COMMIT_HASH"
-                    sh "sed -i 's/${env.latestTag}/my_image:${env.COMMIT_HASH}/g' file.txt"
-                    // Use sed to make changes in file.txt (replace old_pattern with new_pattern)
-                    sh 'git add .'
-                    // Stage changes
-                    sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
-                    // Commit changes
-                    sh 'git push origin master'
-                    // Push changes to the master branch
+        // stage('Pull & Push k8s Manifest') {
+        //     steps {
+        //         dir('/home/ubuntu/fpt-k8s-manifest') {
+        //             // Change to the specified directory
+        //             sh 'git pull origin master'
+        //             // Pull latest changes from the master branch
+        //             echo "Latest tag: $latestTag"
+        //             echo "New image tag: $COMMIT_HASH"
+        //             sh "sed -i 's/${env.latestTag}/my_image:${env.COMMIT_HASH}/g' file.txt"
+        //             // Use sed to make changes in file.txt (replace old_pattern with new_pattern)
+        //             sh 'git add .'
+        //             // Stage changes
+        //             sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
+        //             // Commit changes
+        //             sh 'git push origin master'
+        //             // Push changes to the master branch
                 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
     }
 }
