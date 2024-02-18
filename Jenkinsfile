@@ -23,7 +23,11 @@ pipeline {
                 script {
                     def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
                     def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
-                    def tags = readJSON text: tagsJson
+                    
+                    // Parse JSON using jsonSlurper
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def tags = jsonSlurper.parseText(tagsJson)
+                    
                     def latestTag = tags.imageDetails[0].imageTags[0]
                     echo "Latest tag: $latestTag"
                     // Use the latestTag as needed in subsequent steps
