@@ -65,25 +65,25 @@ pipeline {
                 sh "sudo docker push 571207880192.dkr.ecr.us-east-1.amazonaws.com/fpt-flask-app:${env.COMMIT_HASH}"
             }
         }
-        // stage('Pull & Push k8s Manifest') {
-        //     steps {
-        //         dir('/home/ubuntu/fpt-k8s-manifest') {
-        //             // Change to the specified directory
-        //             sh 'git pull origin master'
-        //             // Pull latest changes from the master branch
-        //             echo "Latest tag: $latestTag"
-        //             echo "New image tag: $COMMIT_HASH"
-        //             sh "sed -i 's/${env.latestTag}/my_image:${env.COMMIT_HASH}/g' file.txt"
-        //             // Use sed to make changes in file.txt (replace old_pattern with new_pattern)
-        //             sh 'git add .'
-        //             // Stage changes
-        //             sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
-        //             // Commit changes
-        //             sh 'git push origin master'
-        //             // Push changes to the master branch
+        stage('Pull & Push k8s Manifest') {
+            steps {
+                dir('/home/ubuntu/fpt-k8s-manifest') {
+                    // Change to the specified directory
+                    sh 'git pull origin master'
+                    // Pull latest changes from the master branch
+                    echo "Latest tag: $latestTag"
+                    echo "New image tag: $COMMIT_HASH"
+                    sh "sed -i 's/${env.latestTag}/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
+                    // Use sed to make changes in file.txt (replace old_pattern with new_pattern)
+                    sh 'git add .'
+                    // Stage changes
+                    sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
+                    // Commit changes
+                    sh 'git push origin main'
+                    // Push changes to the master branch
                 
-        //         }
-        //     }
-        // }
+                }
+            }
+        }
     }
 }
