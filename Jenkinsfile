@@ -6,16 +6,16 @@ pipeline {
         // Capture the short version of the commit hash using 'git rev-parse --short HEAD'
         OLD_IMAGE_TAG = sh(script: 'git rev-parse --short HEAD^', returnStdout: true).trim()
         // Get the previous commit hash as the old image tag
-        AWS_REGION = 'your-aws-region'
-        ECR_REGISTRY = '123456789012.dkr.ecr.your-region.amazonaws.com'
-        ECR_REPOSITORY = 'your-repository'
+        AWS_REGION = 'us-east-1'
+        ECR_REGISTRY = '571207880192.dkr.ecr.us-east-1.amazonaws.com'
+        ECR_REPOSITORY = 'fpt-flask-app'
     }
 
     stages {
         stage('SCM Checkout') {
             steps {
                 echo 'Cloning the repo..'
-                sh 'git clone https://github.com/JendyJasper/ansible-config-mgt'
+                sh 'git clone https://github.com/JendyJasper/fpt-flask-app'
             }
         }
         stage('Retrieve Latest Tag') {
