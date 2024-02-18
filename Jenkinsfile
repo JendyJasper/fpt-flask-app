@@ -14,8 +14,8 @@ pipeline {
     stages {
         stage('SCM Checkout') {
             steps {
-                echo 'Cloning the repo..'
-                sh 'git clone https://github.com/JendyJasper/fpt-flask-app'
+                // Checkout source code from Git
+                git branch: '', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
         stage('Retrieve Latest Tag') {
