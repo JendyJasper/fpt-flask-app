@@ -69,11 +69,11 @@ pipeline {
             steps {
                 dir('/home/ubuntu/fpt-k8s-manifest') {
                     // Change to the specified directory
-                    echo "Latest tag: $latestTag"
+                    echo "Latest tag: ${env.latestTag}"
                     sh 'git pull origin main'
                     // Pull latest changes from the master branch
                     echo "Latest tag: $latestTag"
-                    echo "New image tag: $COMMIT_HASH"
+                    echo "New image tag: ${env.COMMIT_HASH}"
                     sh "sed -i 's/${env.latestTag}/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
                     // Use sed to make changes in file.txt (replace old_pattern with new_pattern)
                     sh 'git add .'
