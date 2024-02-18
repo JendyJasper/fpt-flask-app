@@ -15,7 +15,7 @@ pipeline {
         stage('SCM Checkout') {
             steps {
                 // Checkout source code from Git
-                git branch: '', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
+                git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
         stage('Retrieve Latest Tag') {
