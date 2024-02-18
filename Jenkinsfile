@@ -18,22 +18,22 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-        // stage('Retrieve Latest Tag') {
-        //     steps {
-        //         script {
-        //             def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
-        //             def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
+        stage('Retrieve Latest Tag') {
+            steps {
+                script {
+                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
+                    def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
                     
-        //             // Parse JSON using jsonSlurper
-        //             def jsonSlurper = new groovy.json.JsonSlurper()
-        //             def tags = jsonSlurper.parseText(tagsJson)
+                    // Parse JSON using jsonSlurper
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def tags = jsonSlurper.parseText(tagsJson)
                     
-        //             def latestTag = tags.imageDetails[0].imageTags[0]
-        //             echo "Latest tag: $latestTag"
-        //             // Use the latestTag as needed in subsequent steps
-        //         }
-        //     }
-        // }
+                    def latestTag = tags.imageDetails[0].imageTags[0]
+                    echo "Latest tag: $latestTag"
+                    // Use the latestTag as needed in subsequent steps
+                }
+            }
+        }
         stage('Test') {
             steps {
                 echo 'Testing..'
