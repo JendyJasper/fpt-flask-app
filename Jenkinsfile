@@ -69,6 +69,7 @@ pipeline {
             steps {
                 dir('/home/ubuntu/fpt-k8s-manifest') {
                     // Change to the specified directory
+                    echo "Latest tag: $latestTag"
                     sh 'git pull origin main'
                     // Pull latest changes from the master branch
                     echo "Latest tag: $latestTag"
