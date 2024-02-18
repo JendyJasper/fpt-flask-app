@@ -69,7 +69,7 @@ pipeline {
             steps {
                 dir('/home/ubuntu/fpt-k8s-manifest') {
                     // Change to the specified directory
-                    sh 'git pull origin master'
+                    sh 'git pull origin main'
                     // Pull latest changes from the master branch
                     echo "Latest tag: $latestTag"
                     echo "New image tag: $COMMIT_HASH"
