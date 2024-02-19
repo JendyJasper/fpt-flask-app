@@ -10,9 +10,6 @@ pipeline {
 
     stages {
         stage('SCM Checkout') {
-            when {
-                branch 'main' // Only execute stages when changes are detected in the main branch
-            }
             steps {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
