@@ -29,8 +29,8 @@ pipeline {
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
                     
-                    // Debugging: Print out the structure of the parsed JSON data
-                    echo "Parsed JSON data structure: ${tags.inspect()}"
+                    // Convert the parsed JSON data into a JSON string and print it
+                    echo "Parsed JSON data structure: ${groovy.json.JsonOutput.toJson(tags)}"
                     
                     // Sort the image details by imagePushedAt timestamp
                     def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
