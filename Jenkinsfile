@@ -8,8 +8,18 @@ pipeline {
         ECR_REPOSITORY = 'fpt-flask-app'
     }
 
-    when {
-        branch 'main' // Only execute stages when changes are detected in the main branch
+    triggers {
+        // Ignore changes in any branches except main, feature, and dev
+        ignore {
+            branch('!main')
+            branch('!feature')
+            branch('!dev')
+        }
+        
+        // Filter to monitor only changes in main branch
+        filter {
+            branch('main')
+        }
     }
 
     stages {
