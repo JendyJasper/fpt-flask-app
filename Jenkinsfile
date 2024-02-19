@@ -8,6 +8,16 @@ pipeline {
         ECR_REPOSITORY = 'fpt-flask-app'
     }
 
+    // Define the triggers section
+    triggers {
+        // Define a trigger for changes in the main branch only
+        pollSCM(
+            // Polling must be disabled for all branches except the main branch
+            ignorePostCommitHooks: true,
+            branches: [[name: 'main']]
+        )
+    }
+
     stages {
         stage('SCM Checkout') {
             steps {
