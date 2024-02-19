@@ -7,7 +7,7 @@ pipeline {
         AWS_REGION = 'us-east-1'
         ECR_REGISTRY = '571207880192.dkr.ecr.us-east-1.amazonaws.com'
         ECR_REPOSITORY = 'fpt-flask-app'
-        // LATEST_TAG = ''
+        LATEST_TAG = ''
     }
 
     stages {
