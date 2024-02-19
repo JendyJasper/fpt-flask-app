@@ -23,7 +23,7 @@ pipeline {
                     def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
-                    LATEST_TAG = tags.imageDetails[0].imageTags[0]
+                    env.LATEST_TAG = tags.imageDetails[0].imageTags[0]
                     echo "Latest tag: ${env.LATEST_TAG}"
                 }
             }
