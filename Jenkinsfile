@@ -8,22 +8,11 @@ pipeline {
         ECR_REPOSITORY = 'fpt-flask-app'
     }
 
-    triggers {
-        // Ignore changes in any branches except main, feature, and dev
-        ignore {
-            branch('!main')
-            branch('!feature')
-            branch('!dev')
-        }
-        
-        // Filter to monitor only changes in main branch
-        filter {
-            branch('main')
-        }
-    }
-
     stages {
         stage('SCM Checkout') {
+            when {
+                branch 'main' // Only execute stages when changes are detected in the main branch
+            }
             steps {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
