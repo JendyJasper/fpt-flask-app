@@ -16,8 +16,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-       stages {
-        stage('Retrieve Last Pushed Image') {
+       stage('Retrieve Last Pushed Image') {
             steps {
                 script {
                     def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
@@ -96,5 +95,4 @@ pipeline {
             }
         }
     }
-}
 }
