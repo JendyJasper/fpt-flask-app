@@ -3,11 +3,9 @@ pipeline {
 
     environment {
         COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-        OLD_IMAGE_TAG = sh(script: 'git rev-parse --short HEAD^', returnStdout: true).trim()
         AWS_REGION = 'us-east-1'
         ECR_REGISTRY = '571207880192.dkr.ecr.us-east-1.amazonaws.com'
         ECR_REPOSITORY = 'fpt-flask-app'
-        LATEST_TAG = ''
     }
 
     stages {
@@ -16,51 +14,14 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-       stage('Retrieve Last Pushed Image') {
-            steps {
-                script {
-                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
-                    def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
-                    
-                    // Debugging: Print out the tagsJson
-                    echo "tagsJson: $tagsJson"
-                    
-                    // Parse JSON using Groovy's JsonSlurper
-                    def jsonSlurper = new groovy.json.JsonSlurper()
-                    def tags = jsonSlurper.parseText(tagsJson)
-                    
-                    // Convert the parsed JSON data into a JSON string and print it
-                    echo "Parsed JSON data structure: ${groovy.json.JsonOutput.toJson(tags)}"
-                    
-                    // Check if imageDetails is empty
-                    if (tags.imageDetails) {
-                        // Sort the image details by imagePushedAt timestamp
-                        def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
-                        
-                        // Reverse the order of sortedTags
-                        sortedTags = sortedTags.reverse()
-                        
-                        // Extract the image tags from the first entry
-                        def lastImageTags = sortedTags[0].imageTags
-                        
-                        if (lastImageTags) {
-                            // Print the last pushed image tag
-                            echo "Last pushed image tag: ${lastImageTags[0]}"
-                        } else {
-                            echo "No image tags found for the last pushed image"
-                        }
-                    } else {
-                        echo "No images found in the repository"
-                    }
-                }
-            }
-        }
+
         stage('Test') {
             steps {
                 echo 'Testing..'
                 echo 'Hello World!'
             }
         }
+
         stage('Docker Login') {
             steps {
                 echo 'Logging in....'
@@ -68,6 +29,7 @@ pipeline {
                 echo 'Login successful..'
             }
         }
+
         stage('Docker Build') {
             steps {
                 echo 'Building....'
@@ -85,18 +47,6 @@ pipeline {
                 echo 'Pushing....'
                 sh "sudo docker push ${env.ECR_REGISTRY}/fpt-flask-app:${env.COMMIT_HASH}"
                 sh "sudo docker rmi -f \$(sudo docker images -q)"
-            }
-        }
-        stage('Pull & Push k8s Manifest') {
-            steps {
-                    echo "Latest tag: $LATEST_TAG"
-                    git branch: 'main', credentialsId: 'b4dd1a48-6ef2-4468-a130-0a46f7710175', url: 'https://github.com/JendyJasper/fpt-k8s-manifest.git'
-                    sh 'git pull origin main'
-                    echo "New image tag: ${env.COMMIT_HASH}"
-                    sh "sed -i 's/$LATEST_TAG/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
-                    sh 'git add fpt-flask-redis/fpt_flask_app_values.yml'
-                    sh "git commit -m 'Image tag updated to ${env.COMMIT_HASH}' -a"
-                    sh 'git push origin main'
             }
         }
     }
