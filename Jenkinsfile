@@ -32,18 +32,23 @@ pipeline {
                     // Convert the parsed JSON data into a JSON string and print it
                     echo "Parsed JSON data structure: ${groovy.json.JsonOutput.toJson(tags)}"
                     
-                    // Sort the image details by imagePushedAt timestamp
-                    def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
-                    
-                    // Check if sortedTags is a list and not empty
-                    if (sortedTags instanceof List && !sortedTags.isEmpty()) {
+                    // Check if imageDetails is empty
+                    if (tags.imageDetails) {
+                        // Sort the image details by imagePushedAt timestamp
+                        def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
+                        
                         // Reverse the order of sortedTags
                         sortedTags = sortedTags.reverse()
                         
-                        // Extract the image tag from the first entry
-                        def lastImageTag = sortedTags[0].imageTags[0]
+                        // Extract the image tags from the first entry
+                        def lastImageTags = sortedTags[0].imageTags
                         
-                        echo "Last pushed image tag: $lastImageTag"
+                        if (lastImageTags) {
+                            // Print the last pushed image tag
+                            echo "Last pushed image tag: ${lastImageTags[0]}"
+                        } else {
+                            echo "No image tags found for the last pushed image"
+                        }
                     } else {
                         echo "No images found in the repository"
                     }
