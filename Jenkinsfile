@@ -32,11 +32,13 @@ pipeline {
                             a.imagePushedAt <=> b.imagePushedAt
                         }
                         
+                        // Get the index of the last element
+                        def lastIndex = sortedImageDetails.size() - 1
+                        
                         // Get the last image tag
-                        def lastImageTag = sortedImageDetails[-1].imageTags[0]
+                        def lastImageTag = sortedImageDetails[lastIndex].imageTags[0]
                         
                         // Use the last image tag as needed
-                        LATEST_TAG = lastImageTag
                         echo "Last pushed image tag: $lastImageTag"
                     } else {
                         echo "No image details found."
