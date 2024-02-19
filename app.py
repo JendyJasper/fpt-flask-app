@@ -16,7 +16,7 @@ def check_redis_health():
         redis_client.ping()
         return True
     except redis.ConnectionError as e:
-        logging.error(f"Error connecting to Redis Database: {e}")
+        logging.error(f"Error connecting to Redis: {e}")
         return False
 
 @app.route('/')
