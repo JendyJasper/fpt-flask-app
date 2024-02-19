@@ -19,10 +19,19 @@ pipeline {
         stage('Retrieve Last Pushed Image') {
             steps {
                 script {
-                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION} | jq -r '.imageDetails | sort_by(.imagePushedAt) | reverse | .[0].imageTags[0]'"
-                    def lastImageTag = sh(script: awsCliCmd, returnStdout: true).trim()
+                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
+                    def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
                     
-                    LATEST_TAG = lastImageTag
+                    // Parse JSON using Groovy's JsonSlurper
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def tags = jsonSlurper.parseText(tagsJson)
+                    
+                    // Sort the image details by imagePushedAt timestamp
+                    def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }.reverse()
+                    
+                    // Extract the image tag from the first entry
+                    def lastImageTag = sortedTags[0].imageTags[0]
+                    
                     echo "Last pushed image tag: $lastImageTag"
                 }
             }
