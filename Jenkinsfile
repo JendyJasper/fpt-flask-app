@@ -25,21 +25,26 @@ pipeline {
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
                     
-                    // Sort image details based on imagePushedAt timestamp
-                    def sortedImageDetails = tags.imageDetails.sort { a, b -> 
-                        a.imagePushedAt <=> b.imagePushedAt
+                    // Check if imageDetails array is empty
+                    if (tags.imageDetails) {
+                        // Sort image details based on imagePushedAt timestamp
+                        def sortedImageDetails = tags.imageDetails.sort { a, b -> 
+                            a.imagePushedAt <=> b.imagePushedAt
+                        }
+                        
+                        // Get the last image tag
+                        def lastImageTag = sortedImageDetails[-1].imageTags[0]
+                        
+                        // Use the last image tag as needed
+                        LATEST_TAG = lastImageTag
+                        echo "Last pushed image tag: $lastImageTag"
+                    } else {
+                        echo "No image details found."
                     }
-                    
-                    // Get the last image tag
-                    def lastImageTag = sortedImageDetails.last().imageTags[0]
-                    
-                    // Use the last image tag as needed
-                    echo "Last pushed image tag: $lastImageTag"
-
-                    LATEST_TAG = lastImageTag
                 }
             }
         }
+    }
         stage('Test') {
             steps {
                 echo 'Testing..'
