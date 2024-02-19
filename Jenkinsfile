@@ -27,12 +27,20 @@ pipeline {
                     def tags = jsonSlurper.parseText(tagsJson)
                     
                     // Sort the image details by imagePushedAt timestamp
-                    def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }.reverse()
+                    def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
                     
-                    // Extract the image tag from the first entry
-                    def lastImageTag = sortedTags[0].imageTags[0]
-                    
-                    echo "Last pushed image tag: $lastImageTag"
+                    // Check if sortedTags is not empty
+                    if (!sortedTags.isEmpty()) {
+                        // Reverse the order of sortedTags
+                        sortedTags = sortedTags.reverse()
+                        
+                        // Extract the image tag from the first entry
+                        def lastImageTag = sortedTags[0].imageTags[0]
+                        
+                        echo "Last pushed image tag: $lastImageTag"
+                    } else {
+                        echo "No images found in the repository"
+                    }
                 }
             }
         }
