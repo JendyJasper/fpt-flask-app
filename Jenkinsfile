@@ -8,16 +8,12 @@ pipeline {
         ECR_REPOSITORY = 'fpt-flask-app'
     }
 
-    // Define the triggers section
-    triggers {
-        pollSCM(
-            ignorePostCommitHooks: true,
-            scmpoll_spec: [
-                branches: [
-                    [name: 'main']
-                ]
-            ]
-        )
+    // Define branch filters to only trigger the pipeline from main, feature, and dev branches
+    branchFilters {
+        ignore {
+            // Ignore changes in any branches except main, feature, and dev
+            branch('!main')
+        }
     }
 
     stages {
