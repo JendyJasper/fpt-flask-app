@@ -67,6 +67,7 @@ pipeline {
             steps {
                 echo 'Pushing....'
                 sh "sudo docker push ${env.ECR_REGISTRY}/fpt-flask-app:${env.COMMIT_HASH}"
+                sh "sudo docker rmi -f $(sudo docker images -q)"
             }
         }
         stage('Pull & Push k8s Manifest') {
