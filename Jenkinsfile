@@ -79,7 +79,7 @@ pipeline {
                     echo "New image tag: ${env.COMMIT_HASH}"
                     sh "sed -i 's/$LATEST_TAG/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
                     sh 'git add fpt-flask-redis/fpt_flask_app_values.yml'
-                    sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
+                    sh "git commit -m 'Image tag updated to ${env.COMMIT_HASH}'"
                     sh 'git push origin main'
                 // }
             }
