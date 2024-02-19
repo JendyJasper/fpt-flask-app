@@ -16,18 +16,27 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-        stage('Retrieve Latest Tag') {
+        stage('Retrieve Last Pushed Image') {
             steps {
                 script {
-                    // Execute AWS CLI command to retrieve latest tag
-                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION} | jq -r '.imageDetails | sort_by(.imagePushedAt) | reverse | .[].imageTags[0]'"
-                    def lastImageTag = sh(script: awsCliCmd, returnStdout: true).trim()
+                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
+                    def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
                     
-                    // Set the latest tag as an environment variable
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def tags = jsonSlurper.parseText(tagsJson)
+                    
+                    // Sort image details based on imagePushedAt timestamp
+                    def sortedImageDetails = tags.imageDetails.sort { a, b -> 
+                        a.imagePushedAt <=> b.imagePushedAt
+                    }
+                    
+                    // Get the last image tag
+                    def lastImageTag = sortedImageDetails.last().imageTags[0]
+                    
+                    // Use the last image tag as needed
+                    echo "Last pushed image tag: $lastImageTag"
+
                     LATEST_TAG = lastImageTag
-                    
-                    // Print the latest tag for verification
-                    echo "Latest tag: $LATEST_TAG"
                 }
             }
         }
