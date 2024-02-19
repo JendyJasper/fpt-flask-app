@@ -71,16 +71,16 @@ pipeline {
         }
         stage('Pull & Push k8s Manifest') {
             steps {
-                dir('/home/ubuntu/fpt-k8s-manifest') {
+                // dir('/home/ubuntu/fpt-k8s-manifest') {
                     echo "Latest tag: $LATEST_TAG"
                     git branch: 'main', credentialsId: 'b4dd1a48-6ef2-4468-a130-0a46f7710175', url: 'https://github.com/JendyJasper/fpt-k8s-manifest.git'
-                    sh 'sudo git pull origin main'
+                    sh 'git pull origin main'
                     echo "New image tag: ${env.COMMIT_HASH}"
                     sh "sed -i 's/$LATEST_TAG/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
-                    sh 'sudo git add .'
-                    sh 'sudo git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
-                    sh 'sudo git push origin main'
-                }
+                    sh 'git add .'
+                    sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
+                    sh 'git push origin main'
+                // }
             }
         }
     }
