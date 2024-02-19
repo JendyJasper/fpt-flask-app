@@ -20,20 +20,11 @@ pipeline {
             steps {
                 script {
                     // Execute AWS CLI command to retrieve latest tag
-                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
-                    def imagesJson = sh(script: awsCliCmd, returnStdout: true).trim()
-                    
-                    // Parse JSON using jsonSlurper
-                    def jsonSlurper = new groovy.json.JsonSlurper()
-                    def images = jsonSlurper.parseText(imagesJson)
-                    
-
-                    // Sort images by pushedAt timestamp in descending order
-                    images.imageDetails.sort { it.imagePushedAt }
-                    def latestTag = images.imageDetails[-1].imageTags[0]
+                    def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION} | jq -r '.imageDetails | sort_by(.imagePushedAt) | reverse | .[].imageTags[0]'"
+                    def lastImageTag = sh(script: awsCliCmd, returnStdout: true).trim()
                     
                     // Set the latest tag as an environment variable
-                    LATEST_TAG = latestTag
+                    LATEST_TAG = lastImageTag
                     
                     // Print the latest tag for verification
                     echo "Latest tag: $LATEST_TAG"
