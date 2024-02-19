@@ -10,11 +10,13 @@ pipeline {
 
     // Define the triggers section
     triggers {
-        // Define a trigger for changes in the main branch only
         pollSCM(
-            // Polling must be disabled for all branches except the main branch
             ignorePostCommitHooks: true,
-            branches: [[name: 'main']]
+            scmpoll_spec: [
+                branches: [
+                    [name: 'main']
+                ]
+            ]
         )
     }
 
