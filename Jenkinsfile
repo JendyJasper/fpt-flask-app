@@ -8,11 +8,13 @@ pipeline {
         ECR_REPOSITORY = 'fpt-flask-app'
     }
 
-    // Define branch filters to only trigger the pipeline from main, feature, and dev branches
-    branchFilters {
-        ignore {
-            // Ignore changes in any branches except main, feature, and dev
-            branch('!main')
+    triggers {
+        // Define branch filters to only trigger the pipeline from main branch
+        branches {
+            ignore {
+                // Ignore changes in any branches except main, feature, and dev
+                branch('!main')
+            }
         }
     }
 
