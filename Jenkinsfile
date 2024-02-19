@@ -19,17 +19,29 @@ pipeline {
         stage('Retrieve Latest Tag') {
             steps {
                 script {
+                    // Execute AWS CLI command to retrieve latest tag
                     def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
                     def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
+                    
+                    // Parse JSON response using JsonSlurper
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
-                    env.LATEST_TAG = tags.imageDetails[0].imageTags[0]
+                    
+                    // Assign the latest tag to a variable
+                    def latestTag = tags.imageDetails[0].imageTags[0]
+                    
+                    // Set the latest tag as an environment variable
+                    env.LATEST_TAG = latestTag
+                    
+                    // Print the latest tag for verification
                     echo "Latest tag: ${env.LATEST_TAG}"
                 }
             }
         }
+
         stage('Test Latest Tag') {
             steps {
+                // Access the latest tag from the environment variable
                 echo "Latest tag from Test stage: ${env.LATEST_TAG}"
             }
         }
