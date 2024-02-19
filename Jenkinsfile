@@ -73,7 +73,7 @@ pipeline {
             steps {
                 dir('/home/ubuntu/fpt-k8s-manifest') {
                     echo "Latest tag: $LATEST_TAG"
-                    git branch: 'main', credentialsId: '830222f7-c9e7-41b1-965d-d08eab9b72ed', url: 'https://github.com/JendyJasper/fpt-k8s-manifest.git'
+                    git branch: 'main', credentialsId: 'b4dd1a48-6ef2-4468-a130-0a46f7710175', url: 'https://github.com/JendyJasper/fpt-k8s-manifest.git'
                     sh 'git pull origin main'
                     echo "New image tag: ${env.COMMIT_HASH}"
                     sh "sed -i 's/$LATEST_TAG/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
