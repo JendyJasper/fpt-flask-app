@@ -7,7 +7,7 @@ pipeline {
         AWS_REGION = 'us-east-1'
         ECR_REGISTRY = '571207880192.dkr.ecr.us-east-1.amazonaws.com'
         ECR_REPOSITORY = 'fpt-flask-app'
-        LATEST_TAG = ''
+        // LATEST_TAG = ''
     }
 
     stages {
@@ -31,10 +31,10 @@ pipeline {
                     def latestTag = tags.imageDetails[0].imageTags[0]
                     
                     // Set the latest tag as an environment variable
-                    env.LATEST_TAG = latestTag
+                    LATEST_TAG = latestTag
                     
                     // Print the latest tag for verification
-                    echo "Latest tag: ${env.LATEST_TAG}"
+                    echo "Latest tag: $LATEST_TAG"
                 }
             }
         }
@@ -42,7 +42,7 @@ pipeline {
         stage('Test Latest Tag') {
             steps {
                 // Access the latest tag from the environment variable
-                echo "Latest tag from Test stage: ${env.LATEST_TAG}"
+                echo "Latest tag from Test stage: $LATEST_TAG"
             }
         }
         stage('Test') {
