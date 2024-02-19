@@ -28,6 +28,11 @@ pipeline {
                 }
             }
         }
+        stage('Test Latest Tag') {
+            steps {
+                echo "Latest tag from Test stage: ${env.LATEST_TAG}"
+            }
+        }
         stage('Test') {
             steps {
                 echo 'Testing..'
