@@ -30,7 +30,7 @@ pipeline {
 
                     // Sort images by pushedAt timestamp in descending order
                     images.imageDetails.sort { it.imagePushedAt }
-                    def latestTag = images.imageDetails.reverse()[0].imageTags[0]
+                    def latestTag = images.imageDetails[-1].imageTags[0]
                     
                     // Set the latest tag as an environment variable
                     LATEST_TAG = latestTag
