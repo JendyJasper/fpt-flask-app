@@ -22,9 +22,15 @@ pipeline {
                     def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
                     def tagsJson = sh(script: awsCliCmd, returnStdout: true).trim()
                     
+                    // Debugging: Print out the tagsJson
+                    echo "tagsJson: $tagsJson"
+                    
                     // Parse JSON using Groovy's JsonSlurper
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
+                    
+                    // Debugging: Print out the parsed JSON data
+                    echo "tags: $tags"
                     
                     // Sort the image details by imagePushedAt timestamp
                     def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
