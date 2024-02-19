@@ -27,8 +27,10 @@ pipeline {
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
                     
-                    // Assign the latest tag to a variable
-                    def latestTag = tags.imageDetails[0].imageTags[0]
+
+                    // Sort images by pushedAt timestamp in descending order
+                    images.imageDetails.sort { it.imagePushedAt }
+                    def latestTag = images.imageDetails.reverse()[0].imageTags[0]
                     
                     // Set the latest tag as an environment variable
                     LATEST_TAG = latestTag
