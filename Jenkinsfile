@@ -38,13 +38,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Test Latest Tag') {
-            steps {
-                // Access the latest tag from the environment variable
-                echo "Latest tag from Test stage: $LATEST_TAG"
-            }
-        }
         stage('Test') {
             steps {
                 echo 'Testing..'
@@ -79,10 +72,10 @@ pipeline {
         stage('Pull & Push k8s Manifest') {
             steps {
                 dir('/home/ubuntu/fpt-k8s-manifest') {
-                    echo "Latest tag: ${env.LATEST_TAG}"
+                    echo "Latest tag: $LATEST_TAG"
                     sh 'git pull origin main'
                     echo "New image tag: ${env.COMMIT_HASH}"
-                    sh "sed -i 's/${env.LATEST_TAG}/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
+                    sh "sed -i 's/$LATEST_TAG/${env.COMMIT_HASH}/g' fpt-flask-redis/fpt_flask_app_values.yml"
                     sh 'git add .'
                     sh 'git commit -m "Image tag updated to ${env.COMMIT_HASH}"'
                     sh 'git push origin main'
