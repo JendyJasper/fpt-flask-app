@@ -16,7 +16,8 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-       stage('Retrieve Last Pushed Image') {
+       stages {
+        stage('Retrieve Last Pushed Image') {
             steps {
                 script {
                     def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
@@ -29,8 +30,8 @@ pipeline {
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def tags = jsonSlurper.parseText(tagsJson)
                     
-                    // Debugging: Print out the parsed JSON data
-                    echo "tags: $tags"
+                    // Debugging: Print out the structure of the parsed JSON data
+                    echo "Parsed JSON data structure: ${tags.inspect()}"
                     
                     // Sort the image details by imagePushedAt timestamp
                     def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
