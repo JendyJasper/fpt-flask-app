@@ -16,7 +16,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/JendyJasper/fpt-flask-app.git'
             }
         }
-        stage('Retrieve Last Pushed Image') {
+       stage('Retrieve Last Pushed Image') {
             steps {
                 script {
                     def awsCliCmd = "aws ecr describe-images --repository-name ${env.ECR_REPOSITORY} --region ${env.AWS_REGION}"
@@ -29,8 +29,8 @@ pipeline {
                     // Sort the image details by imagePushedAt timestamp
                     def sortedTags = tags.imageDetails.sort { a, b -> a.imagePushedAt <=> b.imagePushedAt }
                     
-                    // Check if sortedTags is not empty
-                    if (!sortedTags.isEmpty()) {
+                    // Check if sortedTags is a list and not empty
+                    if (sortedTags instanceof List && !sortedTags.isEmpty()) {
                         // Reverse the order of sortedTags
                         sortedTags = sortedTags.reverse()
                         
