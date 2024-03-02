@@ -28,7 +28,7 @@ def hello():
 def count():
     try:
         if not check_redis_health():
-            return jsonify({"error": "Unable to connect to Redis"}), 500
+            return jsonify({"error": "Unable to connect to Redis database"}), 500
 
         increment_visit_count()
         visit_count = get_visit_count()
