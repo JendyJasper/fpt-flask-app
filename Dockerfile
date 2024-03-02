@@ -1,7 +1,7 @@
 FROM python:3.8-slim
 
-# Install Redis
-RUN apt-get update && apt-get install -y redis-server
+# # Install Redis
+# RUN apt-get update && apt-get install -y redis-server
 
 # Copy application files
 WORKDIR /app

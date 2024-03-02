@@ -3,7 +3,7 @@ import redis
 import logging
 
 app = Flask(__name__)
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_client = redis.StrictRedis(host='fpt-redis.main-fpt.svc.cluster.local', port=6379, db=0)
 
 def get_visit_count():
     return int(redis_client.get('visit_count') or 0)
